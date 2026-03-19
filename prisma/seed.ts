@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
@@ -59,6 +60,38 @@ async function main() {
 
   console.log(`✅  Seeded ${plans.length} plans:`);
   plans.forEach((p) => console.log(`    - ${p.name} (₹${p.price}) — id: ${p.id}`));
+
+  // ─── Users ────────────────────────────────────────────────────────────────
+  const [memberHash, adminHash] = await Promise.all([
+    bcrypt.hash('member@123', 10),
+    bcrypt.hash('admin@123', 10),
+  ]);
+
+  const users = await Promise.all([
+    prisma.user.upsert({
+      where: { email: 'member@astragym.com' },
+      update: {},
+      create: {
+        name: 'Demo Member',
+        email: 'member@astragym.com',
+        password: memberHash,
+        role: 'member',
+      },
+    }),
+    prisma.user.upsert({
+      where: { email: 'admin@astragym.com' },
+      update: {},
+      create: {
+        name: 'Admin',
+        email: 'admin@astragym.com',
+        password: adminHash,
+        role: 'admin',
+      },
+    }),
+  ]);
+
+  console.log(`\n✅  Seeded ${users.length} users:`);
+  users.forEach((u) => console.log(`    - ${u.name} (${u.role}) — ${u.email}`));
 
   console.log('\n🎉  Database seeded successfully!\n');
 }
