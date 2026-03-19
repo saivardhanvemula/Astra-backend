@@ -22,6 +22,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(loggerMiddleware);
 
+// Root
+app.get("/", (_req: Request, res: Response) => {
+  res.status(200).json({ success: true, message: "Astra Gym API is up and running." });
+});
+
 // Health check
 app.get("/health", (_req: Request, res: Response) => {
   res.status(200).json({ status: "ok", service: "Astra Gym API", timestamp: new Date() });
