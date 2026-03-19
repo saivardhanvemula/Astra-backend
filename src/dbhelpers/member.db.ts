@@ -48,3 +48,20 @@ export async function getMemberByEmail(email: string) {
     },
   });
 }
+
+export async function updateMember(
+  id: string,
+  data: {
+    name?: string;
+    email?: string | null;
+    phone?: string | null;
+    date_of_birth?: Date | null;
+    gender?: string | null;
+  }
+) {
+  return prisma.member.update({ where: { id }, data });
+}
+
+export async function deleteMember(id: string) {
+  return prisma.member.delete({ where: { id } });
+}

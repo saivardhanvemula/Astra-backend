@@ -52,3 +52,23 @@ export async function joinGym(req: Request, res: Response, next: NextFunction) {
     next(err);
   }
 }
+
+// PUT /api/members/:id — admin only
+export async function updateMember(req: Request, res: Response, next: NextFunction) {
+  try {
+    const member = await memberService.updateMember(req.params.id, req.body);
+    res.json({ success: true, data: member });
+  } catch (err) {
+    next(err);
+  }
+}
+
+// DELETE /api/members/:id — admin only
+export async function deleteMember(req: Request, res: Response, next: NextFunction) {
+  try {
+    await memberService.deleteMember(req.params.id);
+    res.json({ success: true, message: "Member deleted successfully" });
+  } catch (err) {
+    next(err);
+  }
+}

@@ -7,6 +7,8 @@ import {
   getMemberById,
   getMyMembership,
   joinGym,
+  updateMember,
+  deleteMember,
 } from "../controllers/member.controller";
 
 const router = Router();
@@ -25,5 +27,11 @@ router.post("/", authMiddleware, requireAdmin, createMember);
 
 // POST /api/members/join — public (gym join form)
 router.post("/join", joinGym);
+
+// PUT /api/members/:id  — admin only
+router.put("/:id", authMiddleware, requireAdmin, updateMember);
+
+// DELETE /api/members/:id — admin only
+router.delete("/:id", authMiddleware, requireAdmin, deleteMember);
 
 export default router;

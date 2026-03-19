@@ -137,3 +137,31 @@ export async function joinGym(input: JoinGymInput) {
   });
   return member;
 }
+
+// ─── PUT /api/members/:id ─────────────────────────────────────────────────
+export interface UpdateMemberInput {
+  name?: string;
+  email?: string;
+  phone?: string;
+  date_of_birth?: string;
+  gender?: string;
+}
+
+export async function updateMember(id: string, input: UpdateMemberInput) {
+  const existing = await memberDb.getMemberById(id);
+  if (!existing) throw new AppError("Member not found", 404);
+
+  const { date_of_birth, ...rest } = input;
+  const updated = await memberDb.updateMember(id, {
+    ...rest,
+    date_of_birth: date_of_birth ? new Date(date_of_birth) : undefined,
+  });
+  return getMemberById(updated.id);
+}
+
+// ─── DELETE /api/members/:id ──────────────────────────────────────────────
+export async function deleteMember(id: string) {
+  const existing = await memberDb.getMemberById(id);
+  if (!existing) throw new AppError("Member not found", 404);
+  await memberDb.deleteMember(id);
+}
