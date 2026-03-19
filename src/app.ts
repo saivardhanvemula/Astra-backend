@@ -8,6 +8,7 @@ import authRouter from "./routers/auth.router";
 import memberRouter from "./routers/member.router";
 import membershipPlanRouter from "./routers/plan.router";
 import profileRouter from "./routers/profile.router";
+import sessionRouter from "./routers/session.router";
 import loggerMiddleware from "./middlewares/loggerMiddleware";
 import errorMiddleware from "./middlewares/errorMiddleware";
 
@@ -41,6 +42,7 @@ app.use("/api/plans", membershipPlanRouter);
 app.use("/api/profile", profileRouter);
 app.use("/api/trainers", trainerRoutes);
 app.use("/api/transformations", transformationRoutes);
+app.use("/api/sessions", sessionRouter);
 
 // 404
 app.use((_req: Request, res: Response) => {

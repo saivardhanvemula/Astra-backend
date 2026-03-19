@@ -6,6 +6,10 @@ export function generateToken(payload: object) {
   return jwt.sign(payload, SECRET, { expiresIn: "7d" });
 }
 
+export function generateQrToken(payload: object) {
+  return jwt.sign(payload, SECRET, { expiresIn: 60 });
+}
+
 export function verifyToken(token: string) {
   return jwt.verify(token, SECRET);
 }
