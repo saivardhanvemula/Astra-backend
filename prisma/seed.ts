@@ -70,12 +70,30 @@ async function main() {
   const users = await Promise.all([
     prisma.user.upsert({
       where: { email: 'member@astragym.com' },
-      update: {},
+      update: {
+        name: 'Demo Member',
+        password: memberHash,
+        role: 'member',
+        age: 25,
+        gender: 'female',
+        height: 170.5,
+        weight: 65.0,
+        fitness_goal: 'General fitness',
+        profile_picture: 'profiles/demo.jpg',
+      },
       create: {
+        id: '0768fbec-767f-43b1-95c3-65a2f614c710',
         name: 'Demo Member',
         email: 'member@astragym.com',
         password: memberHash,
         role: 'member',
+        age: 25,
+        gender: 'female',
+        height: 170.5,
+        weight: 65.0,
+        fitness_goal: 'General fitness',
+        profile_picture: 'profiles/demo.jpg',
+        created_at: new Date('2026-03-19T09:53:27.748Z'),
       },
     }),
     prisma.user.upsert({
@@ -92,6 +110,63 @@ async function main() {
 
   console.log(`\n✅  Seeded ${users.length} users:`);
   users.forEach((u) => console.log(`    - ${u.name} (${u.role}) — ${u.email}`));
+
+  // ─── Use existing plan for memberships (use Monthly) ───────────────────────
+  const membershipPlanName = 'Monthly';
+  let membershipPlan = await prisma.plan.findFirst({ where: { name: membershipPlanName } });
+  if (!membershipPlan) {
+    // fallback: create a monthly plan if it somehow doesn't exist
+    membershipPlan = await prisma.plan.create({
+      data: {
+        name: membershipPlanName,
+        price: 999,
+        duration: '1 month',
+        duration_days: 30,
+        features: ['Full gym access', 'Locker room access'],
+      },
+    });
+  }
+
+  console.log(`\n✅  Ensured membership plan: ${membershipPlan.name} — id: ${membershipPlan.id}`);
+
+  // ─── Members and Memberships ───────────────────────────────────────────────
+  const member = await prisma.member.upsert({
+    where: { email: 'member@astragym.com' },
+    update: {
+      name: 'Demo Member',
+      phone: '9999999999',
+      gender: 'female',
+    },
+    create: {
+      name: 'Demo Member',
+      email: 'member@astragym.com',
+      phone: '9999999999',
+      date_of_birth: new Date('1998-01-01'),
+      gender: 'female',
+    },
+  });
+
+  // Create a membership for the seeded member if none exists
+  const existingMembership = await prisma.membership.findFirst({ where: { member_id: member.id, plan_id: membershipPlan.id } });
+  if (!existingMembership) {
+    const start = new Date();
+    const end = new Date(start);
+    end.setDate(end.getDate() + (membershipPlan.duration_days ?? 30));
+
+    const membership = await prisma.membership.create({
+      data: {
+        member_id: member.id,
+        plan_id: membershipPlan.id,
+        start_date: start,
+        end_date: end,
+        status: 'active',
+      },
+    });
+
+    console.log(`\n✅  Created membership for ${member.name} — membership id: ${membership.id}`);
+  } else {
+    console.log(`\nℹ️  Membership already exists for ${member.name} — id: ${existingMembership.id}`);
+  }
 
   console.log('\n🎉  Database seeded successfully!\n');
 }

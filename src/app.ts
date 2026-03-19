@@ -3,13 +3,15 @@ dotenv.config();
 
 import express, { Request, Response } from "express";
 import cors from "cors";
+import path from "path";
 
 import authRouter from "./routers/auth.router";
+import memberRouter from "./routers/member.router";
+import membershipPlanRouter from "./routers/plan.router";
+import profileRouter from "./routers/profile.router";
 import loggerMiddleware from "./middlewares/loggerMiddleware";
 import errorMiddleware from "./middlewares/errorMiddleware";
 
-import memberRoutes from "./routes/memberRoutes";
-import planRoutes from "./routes/planRoutes";
 import trainerRoutes from "./routes/trainerRoutes";
 import transformationRoutes from "./routes/transformationRoutes";
 
@@ -26,12 +28,16 @@ app.get("/health", (_req: Request, res: Response) => {
   res.status(200).json({ status: "ok", service: "Astra Gym API", timestamp: new Date() });
 });
 
+// Serve uploaded files
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
+
 // Auth
 app.use("/api/auth", authRouter);
 
-// Existing API routes
-app.use("/api/members", memberRoutes);
-app.use("/api/plans", planRoutes);
+// Member Management
+app.use("/api/members", memberRouter);
+app.use("/api/plans", membershipPlanRouter);
+app.use("/api/profile", profileRouter);
 app.use("/api/trainers", trainerRoutes);
 app.use("/api/transformations", transformationRoutes);
 

@@ -16,27 +16,44 @@ model Plan {
   name     String   @unique
   price    Float
   duration String
+  duration_days Int?
   features String[]
-
-  members Member[]
+  memberships Membership[]
 
   @@map("plans")
 }
 
 model Member {
-  id           String   @id @default(uuid())
-  name         String
-  phone        String
-  email        String   @unique
-  age          Int
-  gender       String
-  fitness_goal String
-  plan_id      String
-  created_at   DateTime @default(now())
+  id            String       @id @default(uuid())
+  name          String
+  email         String?      @unique
+  phone         String?
+  date_of_birth DateTime?    @db.Date
+  gender        String?
+  join_date     DateTime     @default(now()) @db.Date
+  created_by    String?
+  created_at    DateTime     @default(now())
 
-  plan Plan @relation(fields: [plan_id], references: [id])
+  memberships   Membership[]
 
   @@map("members")
+}
+
+
+
+model Membership {
+  id         String         @id @default(uuid())
+  member_id  String
+  plan_id    String
+  start_date DateTime       @db.Date
+  end_date   DateTime       @db.Date
+  status     String         @default("active")
+  created_at DateTime       @default(now())
+
+  member     Member         @relation(fields: [member_id], references: [id], onDelete: Cascade)
+  plan       Plan           @relation(fields: [plan_id], references: [id])
+
+  @@map("memberships")
 }
 
 model Trainer {
@@ -61,12 +78,18 @@ model Transformation {
 }
 
 model User {
-  id         String   @id @default(uuid())
-  name       String
-  email      String   @unique
-  password   String
-  role       String
-  created_at DateTime @default(now())
+  id              String   @id @default(uuid())
+  name            String
+  email           String   @unique
+  password        String
+  role            String
+  age             Int?
+  gender          String?
+  height          Float?
+  weight          Float?
+  fitness_goal    String?
+  profile_picture String?
+  created_at      DateTime @default(now())
 
   @@map("users")
 }

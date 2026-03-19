@@ -13,7 +13,7 @@ export async function validateUser(email: string, password: string) {
 }
 
 export async function generateLoginResponse(user: any) {
-  const payload = { id: user.id, role: user.role };
+  const payload = { id: user.id, email: user.email, role: user.role };
   const token = generateToken(payload);
 
   return {

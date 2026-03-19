@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import * as authService from "../services/auth.service";
+import * as userDb from "../dbhelpers/user.db";
 
 export async function login(req: Request, res: Response) {
   try {
@@ -15,6 +16,18 @@ export async function login(req: Request, res: Response) {
 
     const response = await authService.generateLoginResponse(result);
     return res.json(response);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Server error" });
+  }
+}
+
+export async function getProfile(req: Request, res: Response) {
+  try {
+    const userId = (req as any).user?.id;
+    const user = await userDb.getUserById(userId);
+    if (!user) return res.status(404).json({ error: "User not found" });
+    return res.json(user);
   } catch (err) {
     console.error(err);
     return res.status(500).json({ error: "Server error" });
