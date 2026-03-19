@@ -3,7 +3,6 @@ dotenv.config();
 
 import express, { Request, Response } from "express";
 import cors from "cors";
-import path from "path";
 
 import authRouter from "./routers/auth.router";
 import memberRouter from "./routers/member.router";
@@ -27,9 +26,6 @@ app.use(loggerMiddleware);
 app.get("/health", (_req: Request, res: Response) => {
   res.status(200).json({ status: "ok", service: "Astra Gym API", timestamp: new Date() });
 });
-
-// Serve uploaded files
-app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
 // Auth
 app.use("/api/auth", authRouter);
