@@ -66,8 +66,8 @@ export async function getTodaySession(userEmail: string) {
 
   const session = await sessionDb.getTodaySession(member.id);
   return {
-    checkin_time: session?.check_in_time ?? null,
-    checkout_time: session?.check_out_time ?? null,
+    check_in_time: session?.check_in_time ?? null,
+    check_out_time: session?.check_out_time ?? null,
     duration_minutes: session?.duration_minutes ?? null,
   };
 }
