@@ -2,6 +2,8 @@ import { AppError } from "../middlewares/errorMiddleware";
 import * as memberDb from "../dbhelpers/member.db";
 import * as membershipDb from "../dbhelpers/membership.db";
 import * as planDb from "../dbhelpers/plan.db";
+import * as userDb from "../dbhelpers/user.db";
+import { hashPassword } from "../utils/hash";
 
 export interface CreateMemberInput {
   name: string;
@@ -29,6 +31,23 @@ export async function createMember(input: CreateMemberInput) {
     date_of_birth: date_of_birth ? new Date(date_of_birth) : null,
   });
 
+  // Auto-create a User account so the member can log in
+  // Default password: phone number if provided, otherwise "Astra@1234"
+  let defaultPassword: string | null = null;
+  if (memberData.email) {
+    const existing = await userDb.getUserByEmail(memberData.email);
+    if (!existing) {
+      defaultPassword = memberData.phone ?? "Astra@1234";
+      const hashed = await hashPassword(defaultPassword);
+      await userDb.createUser({
+        name: memberData.name,
+        email: memberData.email,
+        password: hashed,
+        role: "member",
+      });
+    }
+  }
+
   const start = new Date(start_date);
   const end = new Date(start);
   const planDays = (plan as any).duration_days ?? 30;
@@ -41,7 +60,8 @@ export async function createMember(input: CreateMemberInput) {
     end_date: end,
   });
 
-  return getMemberById(member.id);
+  const memberData2 = await getMemberById(member.id);
+  return { ...memberData2, default_password: defaultPassword };
 }
 
 export async function getAllMembers() {

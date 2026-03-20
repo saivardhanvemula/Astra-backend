@@ -33,3 +33,27 @@ export async function getProfile(req: Request, res: Response) {
     return res.status(500).json({ error: "Server error" });
   }
 }
+
+// POST /api/auth/change-password — logged-in user
+export async function changePassword(req: Request, res: Response) {
+  try {
+    const userId = (req as any).user?.id;
+    const { current_password, new_password } = req.body;
+
+    if (!current_password || !new_password) {
+      return res.status(400).json({ error: "current_password and new_password are required" });
+    }
+    if (new_password.length < 6) {
+      return res.status(400).json({ error: "new_password must be at least 6 characters" });
+    }
+
+    await authService.changePassword(userId, current_password, new_password);
+    return res.json({ success: true, message: "Password changed successfully" });
+  } catch (err: any) {
+    if (err.message === "Current password is incorrect") {
+      return res.status(400).json({ error: err.message });
+    }
+    console.error(err);
+    return res.status(500).json({ error: "Server error" });
+  }
+}

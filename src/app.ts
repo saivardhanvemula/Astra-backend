@@ -9,6 +9,7 @@ import memberRouter from "./routers/member.router";
 import membershipPlanRouter from "./routers/plan.router";
 import profileRouter from "./routers/profile.router";
 import sessionRouter from "./routers/session.router";
+import adminRouter from "./routers/admin.router";
 import loggerMiddleware from "./middlewares/loggerMiddleware";
 import errorMiddleware from "./middlewares/errorMiddleware";
 
@@ -43,6 +44,7 @@ app.use("/api/profile", profileRouter);
 app.use("/api/trainers", trainerRoutes);
 app.use("/api/transformations", transformationRoutes);
 app.use("/api/sessions", sessionRouter);
+app.use("/api/admin", adminRouter);
 
 // 404
 app.use((_req: Request, res: Response) => {
