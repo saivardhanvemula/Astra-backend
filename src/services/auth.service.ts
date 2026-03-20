@@ -49,6 +49,13 @@ export async function generateLoginResponse(user: any) {
   const payload = { id: user.id, email: user.email, role: user.role };
   const token = generateToken(payload);
 
+  // Attach member_id if this user has a linked member record
+  let member_id: string | null = null;
+  if (user.email) {
+    const member = await memberDb.getMemberByEmail(user.email);
+    member_id = (member as any)?.id ?? null;
+  }
+
   return {
     token,
     user: {
@@ -56,6 +63,7 @@ export async function generateLoginResponse(user: any) {
       name: user.name,
       email: user.email,
       role: user.role,
+      member_id,
     },
   };
 }

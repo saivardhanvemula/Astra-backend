@@ -10,6 +10,7 @@ import membershipPlanRouter from "./routers/plan.router";
 import profileRouter from "./routers/profile.router";
 import sessionRouter from "./routers/session.router";
 import adminRouter from "./routers/admin.router";
+import workoutRouter from "./routers/workout.router";
 import loggerMiddleware from "./middlewares/loggerMiddleware";
 import errorMiddleware from "./middlewares/errorMiddleware";
 
@@ -45,6 +46,7 @@ app.use("/api/trainers", trainerRoutes);
 app.use("/api/transformations", transformationRoutes);
 app.use("/api/sessions", sessionRouter);
 app.use("/api/admin", adminRouter);
+app.use("/api/workouts", workoutRouter);
 
 // 404
 app.use((_req: Request, res: Response) => {

@@ -36,6 +36,7 @@ model Member {
 
   memberships   Membership[]
   sessions      Session[]
+  workout_plans MemberWorkoutPlan[]
 
   @@map("members")
 }
@@ -106,4 +107,64 @@ model Session {
   member           Member    @relation(fields: [member_id], references: [id], onDelete: Cascade)
 
   @@map("sessions")
+}
+
+model Exercise {
+  id           String              @id @default(uuid())
+  name         String
+  muscle_group String?
+
+  workout_exercises WorkoutExercise[]
+
+  @@map("exercises")
+}
+
+model WorkoutPlan {
+  id         String        @id @default(uuid())
+  name       String
+  created_by String?
+  created_at DateTime      @default(now())
+
+  days       WorkoutDay[]
+  assignments MemberWorkoutPlan[]
+
+  @@map("workout_plans")
+}
+
+model WorkoutDay {
+  id         String            @id @default(uuid())
+  plan_id    String
+  day_number Int
+  title      String?
+
+  plan       WorkoutPlan       @relation(fields: [plan_id], references: [id], onDelete: Cascade)
+  exercises  WorkoutExercise[]
+
+  @@map("workout_days")
+}
+
+model WorkoutExercise {
+  id          String      @id @default(uuid())
+  day_id      String
+  exercise_id String
+  sets        Int?
+  reps        String?
+
+  day         WorkoutDay  @relation(fields: [day_id], references: [id], onDelete: Cascade)
+  exercise    Exercise    @relation(fields: [exercise_id], references: [id])
+
+  @@map("workout_exercises")
+}
+
+model MemberWorkoutPlan {
+  id          String      @id @default(uuid())
+  member_id   String
+  plan_id     String
+  current_day Int         @default(1)
+  assigned_at DateTime    @default(now())
+
+  member      Member      @relation(fields: [member_id], references: [id], onDelete: Cascade)
+  plan        WorkoutPlan @relation(fields: [plan_id], references: [id])
+
+  @@map("member_workout_plans")
 }
