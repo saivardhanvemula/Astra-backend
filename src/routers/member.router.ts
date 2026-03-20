@@ -13,6 +13,9 @@ import {
 
 const router = Router();
 
+
+router.post("/join", joinGym);
+
 // GET /api/members/me   — logged-in member (self)
 router.get("/me", authMiddleware, getMyMembership);
 
@@ -24,9 +27,6 @@ router.get("/:id", authMiddleware, requireAdmin, getMemberById);
 
 // POST /api/members     — admin only (create member + assign plan)
 router.post("/", authMiddleware, requireAdmin, createMember);
-
-// POST /api/members/join — public (gym join form)
-router.post("/join", joinGym);
 
 // PUT /api/members/:id  — admin only
 router.put("/:id", authMiddleware, requireAdmin, updateMember);
