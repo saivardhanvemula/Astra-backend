@@ -12,6 +12,8 @@ import sessionRouter from "./routers/session.router";
 import adminRouter from "./routers/admin.router";
 import workoutRouter from "./routers/workout.router";
 import paymentRouter from "./routers/payment.router";
+import progressRouter from "./routers/progress.router";
+import workoutLogRouter from "./routers/workoutLog.router";
 import loggerMiddleware from "./middlewares/loggerMiddleware";
 import errorMiddleware from "./middlewares/errorMiddleware";
 
@@ -52,6 +54,8 @@ app.use("/api/sessions", sessionRouter);
 app.use("/api/admin", adminRouter);
 app.use("/api/workouts", workoutRouter);
 app.use("/api/payments", paymentRouter);
+app.use("/api/progress", progressRouter);
+app.use("/api/workout-logs", workoutLogRouter);
 
 // 404
 app.use((_req: Request, res: Response) => {

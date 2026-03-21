@@ -36,6 +36,8 @@ model Member {
 
   memberships   Membership[]
   sessions      Session[]
+  weight_logs   WeightLog[]
+  workout_logs  WorkoutLog[]
   workout_plans MemberWorkoutPlan[]
 
   @@map("members")
@@ -97,14 +99,15 @@ model User {
 }
 
 model Session {
-  id               String    @id @default(uuid())
+  id               String      @id @default(uuid())
   member_id        String
   check_in_time    DateTime
   check_out_time   DateTime?
   duration_minutes Int?
-  created_at       DateTime  @default(now())
+  created_at       DateTime    @default(now())
 
-  member           Member    @relation(fields: [member_id], references: [id], onDelete: Cascade)
+  member           Member      @relation(fields: [member_id], references: [id], onDelete: Cascade)
+  workout_log      WorkoutLog?
 
   @@map("sessions")
 }
@@ -115,6 +118,7 @@ model Exercise {
   muscle_group String?
 
   workout_exercises WorkoutExercise[]
+  exercise_logs     ExerciseLog[]
 
   @@map("exercises")
 }
@@ -180,4 +184,46 @@ model Payment {
   created_at          DateTime @default(now())
 
   @@map("payments")
+}
+
+model WeightLog {
+  id          String   @id @default(uuid())
+  member_id   String
+  weight      Float
+  recorded_at DateTime @db.Date @default(now())
+  created_at  DateTime @default(now())
+
+  member      Member   @relation(fields: [member_id], references: [id], onDelete: Cascade)
+
+  @@map("weight_logs")
+}
+
+model WorkoutLog {
+  id            String        @id @default(uuid())
+  member_id     String
+  session_id    String?       @unique
+  workout_day   Int?
+  day_title     String?
+  created_at    DateTime      @default(now())
+
+  member        Member        @relation(fields: [member_id], references: [id], onDelete: Cascade)
+  session       Session?      @relation(fields: [session_id], references: [id])
+  exercise_logs ExerciseLog[]
+
+  @@map("workout_logs")
+}
+
+model ExerciseLog {
+  id             String     @id @default(uuid())
+  workout_log_id String
+  exercise_id    String
+  set_number     Int?
+  reps           String?
+  weight         Float?
+  created_at     DateTime   @default(now())
+
+  workout_log    WorkoutLog @relation(fields: [workout_log_id], references: [id], onDelete: Cascade)
+  exercise       Exercise   @relation(fields: [exercise_id], references: [id])
+
+  @@map("exercise_logs")
 }
