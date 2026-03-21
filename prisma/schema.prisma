@@ -168,3 +168,16 @@ model MemberWorkoutPlan {
 
   @@map("member_workout_plans")
 }
+
+model Payment {
+  id                  String   @id @default(uuid())
+  member_id           String?
+  plan_id             String?
+  razorpay_order_id   String?
+  razorpay_payment_id String?
+  amount              Int
+  status              String   @default("pending")
+  created_at          DateTime @default(now())
+
+  @@map("payments")
+}
