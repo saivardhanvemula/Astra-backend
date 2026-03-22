@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import prisma from '../db';
+import prisma from '../config/db';
 
 export const createMemberSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),

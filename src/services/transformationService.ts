@@ -1,4 +1,4 @@
-import prisma from '../db';
+import prisma from '../config/db';
 
 export const transformationService = {
   async getAllTransformations() {
