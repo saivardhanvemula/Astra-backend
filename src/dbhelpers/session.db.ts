@@ -61,3 +61,7 @@ export async function getSessions() {
     orderBy: { check_in_time: "desc" },
   });
 }
+
+export async function countMemberSessions(member_id: string) {
+  return prisma.session.count({ where: { member_id } });
+}
